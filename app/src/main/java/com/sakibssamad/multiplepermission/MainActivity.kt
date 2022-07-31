@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 
 class MainActivity : AppCompatActivity() {
@@ -16,6 +17,9 @@ class MainActivity : AppCompatActivity() {
 
     private val PermissionsRequestCode = 123
     private lateinit var managePermissions: ManagePermissions
+    private lateinit var managePermissionJava: ManagePermissionJava
+    var x = false
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,11 +41,23 @@ class MainActivity : AppCompatActivity() {
         )
 
         managePermissions = ManagePermissions(this, list, PermissionsRequestCode,this,packageName)
+        managePermissionJava = ManagePermissionJava(this, list, PermissionsRequestCode,this,packageName)
 
         val button = findViewById(R.id.btnRequest) as Button
         button.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                managePermissions.checkPermissions()
+                if (managePermissionJava.checkPermissions()){
+                    Log.e("SKB", "onCreate: ", )
+                }
         }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        x = managePermissionJava.processPermissionsResult(requestCode,permissions,grantResults)
     }
 }
